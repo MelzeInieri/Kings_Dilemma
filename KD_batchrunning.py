@@ -23,19 +23,23 @@ def get_datetimestring():
     return datetimestring
 
 def read_from_file(filename):
-    
+
     with open(filename, 'rb') as infile:
         data = pickle.load(infile)
         
     return data
 
-def write_to_file(data, filename = None):
+def write_to_file(data, filename = None, overwrite = False):
     
     if filename is None:
         filename = get_datetimestring()+'.pickle'
     
-    with open(filename, 'wb') as outfile:
-        pickle.dump(data, outfile)
+    if overwrite:
+        with open(filename, 'wb') as outfile:
+            pickle.dump(data, outfile)
+    else:
+        with open(filename, 'xb') as outfile:
+            pickle.dump(data, outfile)
 
 def players_init():
     ''' Single, somewhat realistic player initialisation of Kings Dilemma for testing purposes'''
@@ -62,17 +66,31 @@ def players_choose(players, planlist, diceroller, choice_weights = None):
     
     M = len(planlist)
     
-    if choice_weights == None:
+    if choice_weights is None:
         for p in players:
             plan = diceroller.choice(M)
             p.rechoose(act1 = KDC.Actions(planlist[plan][1][0]),
                        act2 = KDC.Actions(planlist[plan][1][1]),
                        factie = KDC.Factions(planlist[plan][0]),
                        plan = plan)
+    else:
+        for i,p in enumerate(players):
+            plan = diceroller.choice(M, p = choice_weights[i,:])
+            p.rechoose(act1 = KDC.Actions(planlist[plan][1][0]),
+                       act2 = KDC.Actions(planlist[plan][1][1]),
+                       factie = KDC.Factions(planlist[plan][0]),
+                       plan = plan)
     
-def simulate_N_games(N, players, planlist, diceroller, choice_weight = None, save_data_full = False):
+def simulate_N_games(N, players, planlist, diceroller, choice_weights = None, save_data_full = False):
     
     M = len(planlist)
+    if choice_weights is not None:
+        if np.size(choice_weights,1) != M:
+            raise ValueError("choice weights are not of equal length to planlist")
+        else:
+            choice_weights_copy = choice_weights.copy().astype(float)
+            for i in range(np.size(choice_weights,0)):
+                choice_weights_copy[i,:] = choice_weights[i,:]/np.linalg.norm(choice_weights[i,:],1)
     
     data_stat = np.zeros((5,M,2), dtype = int)
     if save_data_full:
@@ -82,7 +100,7 @@ def simulate_N_games(N, players, planlist, diceroller, choice_weight = None, sav
         
     TheGame = KDC.Game(players,[50,60])
     for i in range(N):
-        players_choose(players, planlist, diceroller)
+        players_choose(players, planlist, diceroller, choice_weights_copy)
         TheGame.reset([50,60])
         TheGame.run()
         for j,p in enumerate(players):
@@ -166,7 +184,7 @@ def game_from_plans(plans,planlist):
     
     return mygame
 
-def get_new_batch(planlist_filename, N = 1000):
+def get_new_batch(planlist_filename, N = 1000, choice_weights = None):
     
     planlist = read_from_file(planlist_filename)
     BZ,DA,PP,MY,JJ = players_init()
@@ -174,20 +192,51 @@ def get_new_batch(planlist_filename, N = 1000):
     diceroller = np.random.default_rng()
     
     tic = time.perf_counter()
-    data_stat, data_full, game_last = simulate_N_games(N, players, planlist, diceroller = diceroller, save_data_full = True)
+    data_stat, data_full, game_last = simulate_N_games(N, players, planlist, diceroller = diceroller, choice_weights = choice_weights, save_data_full = True)
     toc = time.perf_counter()
     print("Duration: ",toc-tic, " seconds")
     
     return planlist, players, data_stat, data_full, game_last
 
+def adjust_weights(weights_in, windata, adjustment_fraction = 0.5, minimum_weight = 0.005):
+    '''
+    adjusts the probabilities of players to choose specific strategies based
+    on their relative winrates with those same strategies. The adjustment fraction
+    stipulates the extent the weights are adjusted. An adjustment_fraction of x
+    means the new weight will be (1-x) + x*relative_winrate (0 to 1).
+    Afterwards the weights are renormalised.
+    minimum_weight is the fraction of the hypothetical uniform weight the actual
+    weights will be set at if they fall below it.
+    '''
+    players = np.size(weights_in,0)
+    N = np.size(weights_in,1)
+    
+    weights_out = weights_in.copy().astype(float)
+    
+    for p in range(players):
+        winrates = windata[p,:,1]/windata[p,:,0]
+        winrates_rangenormed = winrates/np.max(winrates)
+        weights_out[p,:] = weights_out[p,:]*((1-adjustment_fraction)+adjustment_fraction*winrates_rangenormed)
+        weights_out[p,:] = weights_out[p,:]/np.linalg.norm(weights_out[p,:],1)
+        for i,w in enumerate(weights_out[p,:]):
+            if w < minimum_weight/N:
+                weights_out[p,i] = minimum_weight/N
+        weights_out[p,:] = weights_out[p,:]/np.linalg.norm(weights_out[p,:],1)
+        
+    return weights_out
+
 if __name__ == '__main__':
 
-    planlist, players, data_stat, data_full, game_last = get_new_batch('planlist_strong_1.pickle', N = 1000000)
+    # planlist, players, data_stat, data_full, game_last = get_new_batch('planlist_strong_1.pickle', N = 100000)
     
-    write_to_file(data_stat, 'strong_1_stat_01.pickle')
+    # write_to_file(data_stat, 'strong_1_stat_01.pickle')
 
     # nowinners_summ_dict = nowinners_check(players, planlist, data_full)
     # nowinners_game = game_from_plans(nowinners_summ_dict['nowinners_plans'], planlist)
     
-    
-    
+    data = read_from_file('strong_1_stat_01.pickle')
+    weights_uniform = np.ones((5,10))
+    weights_test = adjust_weights(weights_in = weights_uniform, windata = data[:,50:60,:], adjustment_fraction = 0.5)
+    print(np.max(weights_test,1))
+    print(np.min(weights_test,1))
+    print(np.average(weights_test,1))
