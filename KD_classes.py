@@ -49,7 +49,11 @@ class Mark:
 class Player:
     ''' Class for individual players in the endgame of Kings Dilemma'''
     
-    def __init__(self, huis = None, prestige = 0, wens = 0, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def __init__(self, huis = None, 
+                 prestige = 0, wens = 0, 
+                 act1 = None, act2 = None, factie = Factions.PAS, 
+                 plan = None,
+                 place = 6):
         self.prestige    = prestige
         self.wens        = wens
         self.huis        = huis
@@ -58,133 +62,129 @@ class Player:
         self.act2        = act2
         self.factie      = factie
         self.plan        = plan
-        
-        # if hasattr(Actions,self.act1.name) and hasattr(Actions,self.act2.name):
-        #     if self.act1 == self.act2:
-        #         raise ValueError("act1 and act2 are not allowed to be the same")
-        # elif not hasattr(Actions,self.act1.name) and self.act1.name is not None:
-        #     raise ValueError("act1 is not a valid input (None or Actions enum)")
-        # elif not hasattr(Actions,self.act2.name) and self.act2.name is not None:
-        #     raise ValueError("act2 is not a valid input (None or Actions enum)")
-        # else:
-        #     raise ValueError("act1 or act2 are something unexpected...")
-          
-        # if not hasattr(Factions,self.factie.name) and self.factie.name is not None:
-        #     raise ValueError("factie is not a valid input (None or Factions Enum")
-
-        # self.verdediging = sum([self.boxes[111],self.boxes[112]])
-        # self.aanval      = sum([self.boxes[121],self.boxes[122]])
+        self.place       = place
     
     @property
     def score(self):
         return self.prestige + self.wens
     
-    def choose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
-        self.alive       = True
-        self.act1        = act1
-        self.act2        = act2
-        self.factie      = factie
-        self.plan        = plan
+    def choose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
+        self.alive      = True
+        self.act1       = act1
+        self.act2       = act2
+        self.factie     = factie
+        self.plan       = plan
+        self.place      = place
         
 class Piplo_Paplum(Player):
     
     prestige = 31
     wens = 27
     
-    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
         super().__init__(prestige = Piplo_Paplum.prestige, 
                          wens = Piplo_Paplum.wens, 
-                         huis = "Piplo-Paplum", 
+                         huis = "Piplo-Paplum",
+                         place = place,
                          act1 = act1, act2 = act2, factie = factie, plan = plan)
         
-    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
         self.alive       = True
         self.act1        = act1
         self.act2        = act2
         self.factie      = factie
         self.plan        = plan
-        self.prestige = Piplo_Paplum.prestige
-        self.wens = Piplo_Paplum.wens
+        self.place      = place
+        self.prestige   = Piplo_Paplum.prestige
+        self.wens       = Piplo_Paplum.wens
         
 class Duasselak(Player):
     
     prestige = 28
     wens = 32
     
-    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
         super().__init__(prestige = Duasselak.prestige, 
                          wens = Duasselak.wens, 
-                         huis = "Duasselak", 
+                         huis = "Duasselak",
+                         place = place,
                          act1 = act1, act2 = act2, factie = factie, plan = plan)
     
-    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
         self.alive       = True
         self.act1        = act1
         self.act2        = act2
         self.factie      = factie
         self.plan        = plan
-        self.prestige = Duasselak.prestige
-        self.wens = Duasselak.wens
+        self.place      = place
+        self.prestige   = Duasselak.prestige
+        self.wens       = Duasselak.wens
 
 class Juppen_van_Jessias(Player):
     
     prestige = 35
     wens = 17
     
-    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
         super().__init__(prestige = Juppen_van_Jessias.prestige, 
                          wens = Juppen_van_Jessias.wens, 
-                         huis = "Juppen van Jessias", 
+                         huis = "Juppen van Jessias",
+                         place = place,
                          act1 = act1, act2 = act2, factie = factie, plan = plan)
         
-    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
         self.alive       = True
         self.act1        = act1
         self.act2        = act2
         self.factie      = factie
         self.plan        = plan
-        self.prestige = Juppen_van_Jessias.prestige
-        self.wens = Juppen_van_Jessias.wens
+        self.place      = place
+        self.prestige   = Juppen_van_Jessias.prestige
+        self.wens       = Juppen_van_Jessias.wens
         
 class Bonbon_van_Zompestein(Player):
     
     prestige = 51
     wens = 14
     
-    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
         super().__init__(prestige = Bonbon_van_Zompestein.prestige, 
                          wens = Bonbon_van_Zompestein.wens, 
-                         huis = "Bonbon van Zompestein", 
+                         huis = "Bonbon van Zompestein",
+                         place = place,
                          act1 = act1, act2 = act2, factie = factie, plan = plan)
     
-    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
         self.alive       = True
         self.act1        = act1
         self.act2        = act2
         self.factie      = factie
         self.plan        = plan
-        self.prestige = Bonbon_van_Zompestein.prestige
-        self.wens = Bonbon_van_Zompestein.wens
+        self.place      = place
+        self.prestige   = Bonbon_van_Zompestein.prestige
+        self.wens       = Bonbon_van_Zompestein.wens
         
 class Myrna(Player):
     
     prestige = 12
     wens = 41
     
-    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
+    def __init__(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
         super().__init__(prestige = Myrna.prestige, 
                          wens = Myrna.wens, 
-                         huis = "Myrna", 
+                         huis = "Myrna",
+                         place = place,
                          act1 = act1, act2 = act2, factie = factie, plan = plan)
 
-    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None):
-        self.alive       = True
-        self.act1        = act1
-        self.act2        = act2
-        self.factie      = factie
-        self.plan        = plan
-        self.prestige = Myrna.prestige
-        self.wens = Myrna.wens
+    def rechoose(self, act1 = None, act2 = None, factie = Factions.PAS, plan = None, place = 6):
+        self.alive      = True
+        self.act1       = act1
+        self.act2       = act2
+        self.factie     = factie
+        self.plan       = plan
+        self.place      = place
+        self.prestige   = Myrna.prestige
+        self.wens       = Myrna.wens
     
 class Game:
     '''Class that runs the endgame of Kings Dilemma given a list of players
@@ -205,8 +205,9 @@ class Game:
         self.victory = None
         self.survivors = []
         self.survivor_scores = []
-        self.winners = []
-        self.winning_score = 0
+        # self.winners = []
+        # self.winning_score = 0
+        self.ranking = {}
         
     def reset(self, strengths = [0,0]):
         self.licht   = strengths[0]
@@ -222,8 +223,9 @@ class Game:
         self.victory = None
         self.survivors = []
         self.survivor_scores = []
-        self.winners = []
-        self.winning_score = 0
+        # self.winners = []
+        # self.winning_score = 0
+        self.ranking = {}
         
     def resolve_front_gate(self):
         if self.gate_forces[0] > self.gate_forces[1]:
@@ -305,17 +307,23 @@ class Game:
                     if s.wens == m:
                         s.wens += 5 - 2*j
                 
-    def declare_winners(self):
-        for s1 in self.survivors:
-            self.survivor_scores.append(s1.score)
-        if len(self.survivor_scores) != 0:
-            self.winning_score = max(self.survivor_scores)
-        for s2 in self.survivors:
-            if s2.score == self.winning_score:
-                self.winners.append(s2)
-        # print("Winnende factie : "+self.victory.name.capitalize())
-        # print("Winnaar         : Huize ",self.winners)
-        # print("Winnende score  : "+str(self.winning_score))
+    # def declare_winners(self): # deprecated
+    #     for s1 in self.survivors:
+    #         self.survivor_scores.append(s1.score)
+    #     if len(self.survivor_scores) != 0:
+    #         self.winning_score = max(self.survivor_scores)
+    #     for s2 in self.survivors:
+    #         if s2.score == self.winning_score:
+    #             self.winners.append(s2)
+                
+    def determine_ranking(self):
+        self.survivor_scores = list(set([s.score for s in self.survivors]))
+        self.survivor_scores.sort(reverse = True)
+        for i in range(1,len(self.survivor_scores)+1):
+            self.ranking[i] = [s for s in self.survivors if s.score == self.survivor_scores[i-1]]
+            for s in self.ranking[i]:
+                s.place = i
+        self.ranking[6] = [p for p in self.players if p not in self.survivors]
     
         
     def defend(self, player):
@@ -423,8 +431,8 @@ class Game:
         self.award_spoils()
         self.award_endgame_bonus()
         
-        # Step 4: declare the winner!
-        self.declare_winners()
+        # Step 4: determine the ranking
+        self.determine_ranking()
         
     
         
