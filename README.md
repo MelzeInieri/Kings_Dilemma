@@ -1,2 +1,2 @@
 # Kings_Dilemma
- Simulation and analyhsis of the legacy board game King's Dilemma endgame
+ Simulation and analysis of the legacy board game King's Dilemma endgame
